@@ -12,7 +12,7 @@ typedef struct {
 
 typedef struct {
 	char name[10];
-	cpuTime time;
+	cpuTime processTime;
 } process_t;
 
 //
@@ -21,6 +21,7 @@ int main(void) {
 	// Variables
 	// Input variables
 	unsigned short int numberOfProcesses;
+	unsigned short int menuOption;
 
 	// Output variables
 
@@ -44,17 +45,44 @@ int main(void) {
 		exit(1);
 	}
 
-	for (i = 0; i < numberOfProcesses; i++ ) {
-		printf("Enter process name: ");
-		scanf("%s", (processesArray + i)->name );
-		printf("Enter the burst time for the process: ");
-		scanf("%d", &(processesArray + i)->time.burst);
-		puts("");
-	}
+	printf("Enter process name: ");
+	scanf("%d", (processesArray + i)->name );
+
+	//for (i = 0; i < numberOfProcesses; i++ ) {
+	//	printf("Enter process name: ");
+	//	gets((processesArray + i)->name );
+	//	printf("Enter the burst time for the process: ");
+	//	scanf("%d", &(processesArray + i)->processTime.burst);
+	//	puts("");
+	//}
 
 	// Scheduler menu
+	puts("Please select a scheduler algorithm:");
+	do {
+		puts("Press 1 for First Come First Served (FCFS)");
+		puts("Press 2 for Shortest Job First (SJF)");
+		puts("Press 3 for Round Robin (RR)");
+		puts("Press 4 to exit.");
+		printf("Option: ");
+		scanf("%d", &menuOption);
 
+		switch (menuOption) {
+		case 1:
 
+			break;
+		case 2:
+
+			break;
+		case 3:
+
+			break;
+		default:
+			puts("Invalid option. Please verify and try again.");
+		} // switch
+
+	} while ( menuOption != 4 );
+
+	puts("Bye-bye");
 
 	free(processesArray);
 
