@@ -50,3 +50,14 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+
+# Visual Studio Debug folder
+Debug
+
+# Visual Studio project files
+*.sln
+*.db
+*.vcxproj*
+*.opendb
+*.suo
