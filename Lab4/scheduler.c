@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <conio.h>
+//#include <conio.h>
 
 #ifndef DEBUG
 	#define DEBUG
@@ -153,7 +153,7 @@ int main(void) {
 
 //	delete_list(head_ptr);
 
-	getch();
+//	getch();
 
 	return EXIT_SUCCESS;
 
@@ -243,6 +243,8 @@ float round_robin(node_t *rr_list, unsigned short int quantum) {
 	unsigned short int number_processes;
 	unsigned int accum_execution_time;
 	unsigned int total_wait_time;
+    unsigned int list_loops;
+    unsigned int flag;
 	char sentinel;
 	node_t *temp;
 	
@@ -251,38 +253,46 @@ float round_robin(node_t *rr_list, unsigned short int quantum) {
 	accum_execution_time = 0;
 	total_wait_time = 0;
 	temp = rr_list;
+    list_loops = 0;
 	sentinel = 't'; // It's a boolean
+    flag = 0;
 
 	// Process
+    // Print the heading row
+    print_title("Process Name    Start Time    Remaining Time    Wait Time");
+    
 	// Traverse 'rr_list'
-	while (sentinel == 't') {
+	while ( sentinel == 't' && temp != NULL ) {
 
-		if (temp->processTime.burst == 0) {
-			sentinel = 'f';
-		}
-		else {
-			// The process' new 'burst' time is its 'burst' time minus the 'quantum'
-			temp->processTime.burst = temp->processTime.burst - quantum;
-
+		if (temp->processTime.burst != 0) {
+            
 			// Avoid negative burst times. Set them to '0'
-			if (temp->processTime.burst < 0) {
+			if ( temp->processTime.burst < quantum ) {
 				temp->processTime.burst = 0;
-			}
+			} else {
+                // The process' new 'burst' time is its 'burst' time minus the 'quantum'
+                temp->processTime.burst -= quantum;
+            }
 			
 			// The 'wait' time of the current process is value that is in 'accum_execution_time' so far
-			temp->processTime.wait = accum_execution_time;
+			temp->processTime.wait = accum_execution_time - (list_loops * quantum);
 
 			// 'total_wait_time' for average wait time caculation
 			total_wait_time += temp->processTime.wait;
 
-			// Add the 'burst' time of the current process to the 'accum_execution_time'
-			accum_execution_time += quantum;
-
 			// Call a process display function:
 			// Pname       Start Time              Remaining time                Wait time
 			//        (accum_execution_time)    (temp->processTime.burst)    (temp->processTime.wait)
-			//                                      [burst - quantum]
-		}
+			//                                     [burst - quantum]
+            printf("%12s    %10d    %14d    %9d\n", temp->name, accum_execution_time, temp->processTime.burst, temp->processTime.wait);
+            
+            // Add a 'quantum' to the 'accum_execution_time'
+			accum_execution_time += quantum;
+            
+		}// if
+        
+        // Update 'flag' state
+        flag += temp->processTime.burst;
 
 		// Go to next node
 		temp = temp->NEXT;
@@ -291,7 +301,19 @@ float round_robin(node_t *rr_list, unsigned short int quantum) {
 		if (temp == NULL) {
 			// If we are go back to the begining of the list
 			temp = rr_list;
-		}
+            
+            // Keep track of how many times we have looped the list
+            list_loops++;
+            
+            
+            if (flag) {
+                // There are still processes to finished, reset flag
+                flag = 0;
+            } else {
+                // All processes are finished, exit 'while' loop
+                sentinel = 'f';
+            }
+		} // if
 	} // while
 
 	// Restore original 'burst' times into 'rr_list'
@@ -541,7 +563,7 @@ void delete_list(node_t * head_ptr)
 		temp = temp->NEXT;
 	}
 
-	head_ptr == NULL;
+	head_ptr = NULL;
 
 } // delete_list
 
@@ -549,7 +571,7 @@ void delete_list(node_t * head_ptr)
 unsigned short int size(const node_t * headPtr) {
 	//	Local variables
 	//	Local auxiliary local variables
-	node_t *temp;
+	const node_t *temp;
 	int i;
 
 	//	Initialise local variables
