@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <conio.h>
+//#include <conio.h>
 
 #ifndef DEBUG
 	#define DEBUG
@@ -30,20 +30,27 @@ typedef struct process node_t;
 
 // Functions' prototypes
 // The following return the average wait time
-float fcfs(const node_t *head_ptr);
-float sjf(const node_t *head_ptr);
+float fcfs(node_t *fcfs_list);
+float sjf(node_t *sjf_list);
+float round_robin(node_t *rr_list, unsigned short int quantum);
+
+void fcfs_wrapper(const node_t *head_ptr);
+void sjf_wrapper(const node_t *head_ptr);
+void round_robin_wrapper(const node_t *head_ptr);
+
 
 void sort(node_t *head_ptr);
 void add_first_node(node_t **headPtr, char name[], unsigned int burst_time);
 void add_node(node_t *head_ptr, char name[], unsigned int burst_time);
-node_t * copy_list(const node_t *head_ptr);
+node_t * copy_list(const node_t *src_list);
 void display_list(const node_t *head_ptr);
-void delete_list(node_t *head_ptr);
-node_t * create_node(char name[], unsigned int burst_time);
+void delete_list(const node_t *head_ptr);
+node_t * create_node(const char name[], unsigned int burst_time);
 int search_node(char needle[], node_t *hay_stack);
-void copy_node(node_t *dst, node_t *src);
+void copy_node(node_t *dst, const node_t *src);
 void capture_string(char * dst, const char *message);
 int capture_integer(const char *message);
+unsigned short int capture_short_uint(const char *message);
 void print_title(const char *title);
 
 
@@ -70,17 +77,16 @@ int main(void) {
 	// Start program
 	print_title("\nJob Scheduler");
 
-	printf("Please enter the number of processes: ");
-	scanf("%hd", &numberOfProcesses);
+	numberOfProcesses = capture_short_uint("Please enter the number of processes: ");
 	puts("");
 
     // Start the linked list of processes
+    // Capture first node
 	if (head_ptr == NULL) {
-		printf("Enter process name: ");
-		scanf("%s", input_proc_name);
-		printf("Enter the burst time for the process: ");
-		scanf("%hd", &input_burst_time);
+        capture_string(input_proc_name, "Enter process name: ");
+        input_burst_time = capture_short_uint("Enter the burst time for the process: ");
 		puts("");
+        
 		add_first_node(&head_ptr, input_proc_name, input_burst_time);
 		i = 1;
 	}
@@ -89,17 +95,17 @@ int main(void) {
 		exit(2);
 	}
     
+    // Capture the rest of the nodes
 	while ( i < numberOfProcesses ) {
-		printf("Enter process name: ");
-		scanf("%s", input_proc_name );
-		printf("Enter the burst time for the process: ");
-		scanf("%hd", &input_burst_time);
+		capture_string(input_proc_name, "Enter process name: ");
+        input_burst_time = capture_short_uint("Enter the burst time for the process: ");
         add_node(head_ptr, input_proc_name, input_burst_time);
 		puts("");
         
         i++;
 	}
 
+#undef DEBUG
 #ifdef DEBUG
     print_title("++DEBUG: Display list");
     if (head_ptr == NULL) {
@@ -109,6 +115,7 @@ int main(void) {
         display_list(head_ptr);
     }
 #endif
+#define DEBUG
     
 	// Scheduler menu
 	puts("Please select a scheduler algorithm:");
@@ -122,16 +129,13 @@ int main(void) {
 
 		switch (menuOption) {
 		case 1:
-                print_title("First Come First Served");
-                printf("%.2f\n", fcfs(head_ptr));
+                fcfs_wrapper(head_ptr);
 			break;
 		case 2:
-                print_title("Shortest Job First");
-				printf("%.2f\n", sjf(head_ptr));
+                sjf_wrapper(head_ptr);
 			break;
 		case 3:
-                print_title("Round Robin");
-//                round_robin(head_ptr);
+                round_robin_wrapper(head_ptr);
 			break;
         case 4:
             // Do nothing, just exit.
@@ -148,7 +152,7 @@ int main(void) {
 
 //	delete_list(head_ptr);
 
-	getch();
+//	getch();
 
 	return EXIT_SUCCESS;
 
@@ -159,21 +163,17 @@ int main(void) {
 
 // Functions definitions
 
-float fcfs(const node_t *head_ptr) {
+float fcfs(node_t *fcfs_list) {
 	// Local variables
 
-	// Local auxiliary local variables
+	// Auxiliary local variables
 	unsigned int previous_execution_time;
 	unsigned int accum_execution_time;
 	unsigned short int number_processes;
 	unsigned int total_wait_time;
-	node_t *fcfs_list;
 	node_t *temp;
 	
 	//	Initialize local variables
-	// Defensive copy, deep copy from the original list
-	fcfs_list = copy_list(head_ptr);
-
 	previous_execution_time = 0;
 	accum_execution_time = 0;
 	total_wait_time = 0;
@@ -218,16 +218,8 @@ float fcfs(const node_t *head_ptr) {
 } // fcfs
 
 
-float sjf(const node_t * head_ptr)
+float sjf(node_t *sjf_list)
 {
-	// Local variables
-	// Local auxiliary local variables
-	node_t *sjf_list;
-
-	//	Initialize local variables
-	// Defensive copy, deep copy from the original list
-	sjf_list = copy_list(head_ptr);
-
 	// Process
 	// Sort the copylist
 	sort(sjf_list);
@@ -243,7 +235,81 @@ float sjf(const node_t * head_ptr)
 #endif
 
 	return fcfs(sjf_list);
+    
 } // sfj
+
+
+float round_robin(node_t *rr_list, unsigned short int quantum) {
+    
+    return 1.0;
+    
+} //round_robin
+
+
+void fcfs_wrapper(const node_t *head_ptr) {
+    // Local variables
+    // Output local variables
+    float average_wait_time;
+    
+	// Auxiliary local variables
+	node_t *fcfs_list;
+    
+	//	Initialize local variables
+	// Defensive copy, deep copy from the original list
+	fcfs_list = copy_list(head_ptr);
+    
+	// Process
+    print_title("First Come First Served");
+    average_wait_time = fcfs(fcfs_list);
+    printf("%.2f\n", average_wait_time);
+    
+} // fcfs_wrapper
+
+
+void sjf_wrapper(const node_t *head_ptr) {
+    // Local variables
+	// Output local variables
+    float average_wait_time;
+    
+    // Auxiliary local variables
+	node_t *sjf_list;
+    
+	//	Initialize local variables
+	// Defensive copy, deep copy from the original list
+	sjf_list = copy_list(head_ptr);
+    
+	// Process
+	print_title("Shortest Job First");
+    average_wait_time = sjf(sjf_list);
+    printf("%.2f\n", average_wait_time);
+    
+} // sjf_wrapper
+
+
+void round_robin_wrapper(const node_t *head_ptr) {
+    // Local variables
+    // Input local variables
+    unsigned short int quantum;
+    
+	// Output local variables
+    float average_wait_time;
+    
+    // Auxiliary local variables
+	node_t *rr_list;
+    
+    //	Initialize local variables
+    // Defensive copy, deep copy from the original list
+	rr_list = copy_list(head_ptr);
+    
+    //Process
+    print_title("Round Robin");
+    puts("");
+    quantum = capture_short_uint("Enter the quantum: ");
+    
+    average_wait_time = round_robin(rr_list, quantum);
+    printf("%.2f\n", average_wait_time);
+    
+} // round_robin_wrapper
 
 
 void sort(node_t *head_ptr) {
@@ -318,7 +384,7 @@ void add_node(node_t * head_ptr, char name[], unsigned int burst_time) {
 } // add_node
 
 
-node_t * copy_list(const node_t * src_list)
+node_t * copy_list(const node_t *src_list)
 {
 	// Local variables
 	// Local auxiliary local variables
@@ -350,6 +416,7 @@ node_t * copy_list(const node_t * src_list)
 		temp_dst = temp_dst->NEXT;
 	}
 
+#undef DEBUG
 #ifdef DEBUG
 	print_title("++DEBUG: copy_list: Display src_list");
 	if (src_list == NULL) {
@@ -367,6 +434,7 @@ node_t * copy_list(const node_t * src_list)
 		display_list(dst_list);
 	}
 #endif
+#define DEBUG
 
 	return dst_list;
 
@@ -376,7 +444,7 @@ node_t * copy_list(const node_t * src_list)
 void display_list(const node_t *head_ptr) {
 	//	Local variables
 	//	Local output local variables
-	node_t *temp;
+	const node_t *temp;
 
 	//	Initialize local variables
 	temp = head_ptr;
@@ -471,7 +539,7 @@ int search_node(char needle[], node_t * hay_stack) {
 } // search_node
 
 
-void copy_node(node_t *dst, node_t *src) {
+void copy_node(node_t *dst, const node_t *src) {
 	//  Process
 	strcpy(dst->name, src->name);
 	dst->processTime.burst = src->processTime.burst;
@@ -500,6 +568,20 @@ int capture_integer(const char *message) {
 	return integer;
     
 } // capture_integer
+
+
+unsigned short int capture_short_uint(const char *message) {
+    //	Local variables
+    //	Local input variables
+	unsigned short int integer;
+    
+    //	Process
+	printf("%s", message);
+	scanf("%hd%*c", &integer);
+    
+	return integer;
+    
+} // capture_short_uint
 
 
 void print_title(const char *message) {
