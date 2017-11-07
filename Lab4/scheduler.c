@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//#include <conio.h>
+#include <conio.h>
 
 #ifndef DEBUG
 	#define DEBUG
@@ -44,7 +44,8 @@ void add_first_node(node_t **headPtr, char name[], unsigned int burst_time);
 void add_node(node_t *head_ptr, char name[], unsigned int burst_time);
 node_t * copy_list(const node_t *src_list);
 void display_list(const node_t *head_ptr);
-void delete_list(const node_t *head_ptr);
+void delete_list(node_t *head_ptr);
+unsigned short int size(const node_t * headPtr);
 node_t * create_node(const char name[], unsigned int burst_time);
 int search_node(char needle[], node_t *hay_stack);
 void copy_node(node_t *dst, const node_t *src);
@@ -152,7 +153,7 @@ int main(void) {
 
 //	delete_list(head_ptr);
 
-//	getch();
+	getch();
 
 	return EXIT_SUCCESS;
 
@@ -165,19 +166,16 @@ int main(void) {
 
 float fcfs(node_t *fcfs_list) {
 	// Local variables
-
 	// Auxiliary local variables
-	unsigned int previous_execution_time;
-	unsigned int accum_execution_time;
 	unsigned short int number_processes;
+	unsigned int accum_execution_time;
 	unsigned int total_wait_time;
 	node_t *temp;
 	
 	//	Initialize local variables
-	previous_execution_time = 0;
 	accum_execution_time = 0;
-	total_wait_time = 0;
 	number_processes = 0;
+	total_wait_time = 0;
 	temp = fcfs_list;
 
 	
@@ -240,8 +238,65 @@ float sjf(node_t *sjf_list)
 
 
 float round_robin(node_t *rr_list, unsigned short int quantum) {
-    
-    return 1.0;
+	// Local variables
+	// Auxiliary local variables
+	unsigned short int number_processes;
+	unsigned int accum_execution_time;
+	unsigned int total_wait_time;
+	char sentinel;
+	node_t *temp;
+	
+	//	Initialize local variables
+	number_processes = size(rr_list);
+	accum_execution_time = 0;
+	total_wait_time = 0;
+	temp = rr_list;
+	sentinel = 't'; // It's a boolean
+
+	// Process
+	// Traverse 'rr_list'
+	while (sentinel == 't') {
+
+		if (temp->processTime.burst == 0) {
+			sentinel = 'f';
+		}
+		else {
+			// The process' new 'burst' time is its 'burst' time minus the 'quantum'
+			temp->processTime.burst = temp->processTime.burst - quantum;
+
+			// Avoid negative burst times. Set them to '0'
+			if (temp->processTime.burst < 0) {
+				temp->processTime.burst = 0;
+			}
+			
+			// The 'wait' time of the current process is value that is in 'accum_execution_time' so far
+			temp->processTime.wait = accum_execution_time;
+
+			// 'total_wait_time' for average wait time caculation
+			total_wait_time += temp->processTime.wait;
+
+			// Add the 'burst' time of the current process to the 'accum_execution_time'
+			accum_execution_time += quantum;
+
+			// Call a process display function:
+			// Pname       Start Time              Remaining time                Wait time
+			//        (accum_execution_time)    (temp->processTime.burst)    (temp->processTime.wait)
+			//                                      [burst - quantum]
+		}
+
+		// Go to next node
+		temp = temp->NEXT;
+
+		// Check if we are at the end of the list
+		if (temp == NULL) {
+			// If we are go back to the begining of the list
+			temp = rr_list;
+		}
+	} // while
+
+	// Restore original 'burst' times into 'rr_list'
+
+    return (float)total_wait_time / (float)number_processes;;
     
 } //round_robin
 
@@ -463,7 +518,7 @@ void display_list(const node_t *head_ptr) {
 } // display_list
 
 
-void delete_list(const node_t * head_ptr)
+void delete_list(node_t * head_ptr)
 {
 	//	Local variables
 	//	Local auxiliary variables
@@ -485,7 +540,32 @@ void delete_list(const node_t * head_ptr)
 		previous_node = temp;
 		temp = temp->NEXT;
 	}
+
+	head_ptr == NULL;
+
 } // delete_list
+
+
+unsigned short int size(const node_t * headPtr) {
+	//	Local variables
+	//	Local auxiliary local variables
+	node_t *temp;
+	int i;
+
+	//	Initialise local variables
+	temp = headPtr;
+	i = 0;
+
+	//	Process
+	//  Loop til the end of the list
+	while (temp != NULL) {
+		temp = temp->NEXT;
+		++i;
+	}
+
+	return i;
+
+} // size
 
 
 node_t * create_node(const char name[], unsigned int burst_time) {
