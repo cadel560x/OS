@@ -42,14 +42,14 @@ void round_robin_wrapper(const node_t *head_ptr);
 
 // Linked List prototypes
 void sort(node_t *head_ptr);
-void add_first_node(node_t **headPtr, char name[], unsigned int burst_time);
-void add_node(node_t *head_ptr, char name[], unsigned int burst_time);
+void add_first_node(node_t **headPtr, const char name[], unsigned int burst_time);
+void add_node(node_t *head_ptr, const char name[], unsigned int burst_time);
 node_t * copy_list(const node_t *src_list);
 void display_list(const node_t *head_ptr);
 void delete_list(node_t *head_ptr);
 unsigned short int size(const node_t * headPtr);
 node_t * create_node(const char name[], unsigned int burst_time);
-int search_node(char needle[], node_t *hay_stack);
+int search_node(const char needle[], const node_t *hay_stack);
 void copy_node(node_t *dst, const node_t *src);
 
 // Utilities prototypes
@@ -494,7 +494,7 @@ void sort(node_t *head_ptr) {
 } // sort
 
 
-void add_first_node(node_t **head_ptr, char name[], unsigned int burst_time) {
+void add_first_node(node_t **head_ptr, const char name[], unsigned int burst_time) {
     //	Local variables
     //	Local auxiliary local variables
 	node_t *new_node;
@@ -513,7 +513,7 @@ void add_first_node(node_t **head_ptr, char name[], unsigned int burst_time) {
     
 } // add_first_node
 
-void add_node(node_t * head_ptr, char name[], unsigned int burst_time) {
+void add_node(node_t * head_ptr, const char name[], unsigned int burst_time) {
     //	Local variables
     //	Local auxiliary local variables
 	node_t *temp;
@@ -691,7 +691,7 @@ node_t * create_node(const char name[], unsigned int burst_time) {
     
 } // create_node
 
-int search_node(char needle[], node_t * hay_stack) {
+int search_node(const char needle[], const node_t * hay_stack) {
     //	Local variables
     //	Local auxiliary local variables
 	node_t *temp;
