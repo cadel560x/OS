@@ -5,9 +5,10 @@
 #include <string.h>
 //#include <conio.h>
 
-#ifndef DEBUG
-	#define DEBUG
-#endif
+#undef DEBUG
+//#ifndef DEBUG
+//	#define DEBUG
+//#endif
 
 
 // Data structures
@@ -32,13 +33,14 @@ typedef struct process node_t;
 // The following return the average wait time
 float fcfs(node_t *fcfs_list);
 float sjf(node_t *sjf_list);
-float round_robin(node_t *rr_list, unsigned short int quantum);
+float round_robin(const node_t *head_ptr, node_t *rr_list, unsigned short int quantum);
 
 void fcfs_wrapper(const node_t *head_ptr);
 void sjf_wrapper(const node_t *head_ptr);
 void round_robin_wrapper(const node_t *head_ptr);
 
 
+// Linked List prototypes
 void sort(node_t *head_ptr);
 void add_first_node(node_t **headPtr, char name[], unsigned int burst_time);
 void add_node(node_t *head_ptr, char name[], unsigned int burst_time);
@@ -49,6 +51,8 @@ unsigned short int size(const node_t * headPtr);
 node_t * create_node(const char name[], unsigned int burst_time);
 int search_node(char needle[], node_t *hay_stack);
 void copy_node(node_t *dst, const node_t *src);
+
+// Utilities prototypes
 void capture_string(char * dst, const char *message);
 int capture_integer(const char *message);
 unsigned short int capture_short_uint(const char *message);
@@ -106,9 +110,8 @@ int main(void) {
         i++;
 	}
 
-#undef DEBUG
 #ifdef DEBUG
-    print_title("++DEBUG: Display list");
+    print_title("++DEBUG: main: Display list");
     if (head_ptr == NULL) {
         puts("The list is empty.");
     }
@@ -116,7 +119,6 @@ int main(void) {
         display_list(head_ptr);
     }
 #endif
-#define DEBUG
     
 	// Scheduler menu
 	puts("Please select a scheduler algorithm:");
@@ -151,8 +153,6 @@ int main(void) {
 
 	puts("Bye-bye");
 
-//	delete_list(head_ptr);
-
 //	getch();
 
 	return EXIT_SUCCESS;
@@ -168,12 +168,12 @@ float fcfs(node_t *fcfs_list) {
 	// Local variables
 	// Auxiliary local variables
 	unsigned short int number_processes;
-	unsigned int accum_execution_time;
+	unsigned int start_time;
 	unsigned int total_wait_time;
 	node_t *temp;
 	
 	//	Initialize local variables
-	accum_execution_time = 0;
+	start_time = 0;
 	number_processes = 0;
 	total_wait_time = 0;
 	temp = fcfs_list;
@@ -181,13 +181,22 @@ float fcfs(node_t *fcfs_list) {
 	
 
 	// Process
+    // Print the heading row
+    print_title("Process Name    Start Time    Wait Time");
+    
+    
 	// Traverse 'fcfs_list'
 	while (temp != NULL) {
+        
 		// The 'wait' time of the current process is value that is in 'accum_execution_time' so far
-		temp->processTime.wait = accum_execution_time;
+		temp->processTime.wait = start_time;
+        
+        // Process stamp display:
+        printf("%12s    %10d    %9d\n", temp->name, start_time, temp->processTime.wait);
+        
 		// Add the 'burst' time of the current process to the 'accum_execution_time'
-		accum_execution_time += temp->processTime.burst;
-
+		start_time += temp->processTime.burst;
+        
 		// 'total_wait_time' for average wait time caculation
 		total_wait_time += temp->processTime.wait;
 
@@ -196,7 +205,7 @@ float fcfs(node_t *fcfs_list) {
 		// Keep the process count
 		number_processes++;
 	}
-	
+
 #ifdef DEBUG
 	print_title("++DEBUG: fcfs: Display fcfs_list");
 	if (fcfs_list == NULL) {
@@ -204,13 +213,13 @@ float fcfs(node_t *fcfs_list) {
 	}
 	else {
 		display_list(fcfs_list);
-		printf("++DEBUG: fcfs: Accumulated execution time: %d\n", accum_execution_time);
+		printf("++DEBUG: fcfs: Accumulated execution time: %d\n", start_time);
 		printf("++DEBUG: fcfs: Total wait time: %d\n", total_wait_time);
 		printf("++DEBUG: fcfs: Number of processes: %d\n", number_processes);
 	}
 #endif
 
-	// Calculate 'average_wait_time'
+	// Calculate average wait time
 	return (float)total_wait_time/(float)number_processes;
 
 } // fcfs
@@ -231,30 +240,37 @@ float sjf(node_t *sjf_list)
 		display_list(sjf_list);
 	}
 #endif
-
+    
+    // Return
 	return fcfs(sjf_list);
     
 } // sfj
 
 
-float round_robin(node_t *rr_list, unsigned short int quantum) {
+float round_robin(const node_t *head_ptr, node_t *rr_list, unsigned short int quantum) {
 	// Local variables
 	// Auxiliary local variables
 	unsigned short int number_processes;
     unsigned short int real_exec_time;
-	unsigned int accum_execution_time;
+	unsigned int start_time;
 	unsigned int total_wait_time;
     unsigned int list_loops;
+    const node_t *orig_list;
+    node_t *rest_of_nodes;
     unsigned int flag;
 	char sentinel;
 	node_t *temp;
 	
 	//	Initialize local variables
 	number_processes = size(rr_list);
-	accum_execution_time = 0;
+    
+    temp = rr_list;
+    rest_of_nodes = NULL;
+    orig_list = head_ptr;
+    
 	total_wait_time = 0;
     real_exec_time = 0;
-	temp = rr_list;
+    start_time = 0;
     list_loops = 0;
 	sentinel = 't'; // It's a boolean
     flag = 0;
@@ -263,11 +279,18 @@ float round_robin(node_t *rr_list, unsigned short int quantum) {
     // Print the heading row
     print_title("Process Name    Start Time    Remaining Time    Wait Time");
     
+    // 'temp' is pointing to the head pointer of the 'rr_list'
+    if (temp != NULL) {
+        rest_of_nodes = temp->NEXT;
+    }
+    
 	// Traverse 'rr_list'
 	while ( sentinel == 't' && temp != NULL ) {
-
+        
+        // Check if this process is finished or if it has to be processed
 		if (temp->processTime.burst != 0) {
             
+            // Determine 'real_exec_time': 'burst' or 'quantum'
 			// Avoid negative burst times. Set them to '0'
 			if ( temp->processTime.burst < quantum ) {
                 
@@ -275,54 +298,101 @@ float round_robin(node_t *rr_list, unsigned short int quantum) {
                 
 				temp->processTime.burst = 0;
 			} else {
-                // The process' new 'burst' time is its 'burst' time minus the 'quantum'
-                temp->processTime.burst -= quantum;
                 
                 real_exec_time = quantum;
-            }
+                
+                // The process' new 'burst' time is its 'burst' time minus the 'quantum'
+                temp->processTime.burst -= quantum;
+            } // if - else
 			
-			// The 'wait' time of the current process is value that is in 'accum_execution_time' so far
-			temp->processTime.wait = accum_execution_time - (list_loops * quantum);
+			// The previous 'accum_execution_time' is added to the current process's 'wait' time
+			// temp->processTime.wait = start_time;
+            
+            if (rest_of_nodes == NULL) {
+                
+                // Go back to the begining of the list
+                rest_of_nodes = rr_list;
+            }
+            
+            // Add the 'real_exec_time' to the 'wait' time of the 'rest_of_nodes' that are not finished
+            while ( strcmp(rest_of_nodes->name, temp->name) != 0 ) { // Remember: 'rest_of_nodes' starts at the 'NEXT' node of the current processed node and it ends on this current node.
+                
+                // Check if the process is finished
+                if (rest_of_nodes->processTime.burst > 0) {
+                    rest_of_nodes->processTime.wait += real_exec_time;
+                }
+                
+                rest_of_nodes = rest_of_nodes->NEXT;
+                
+                // Check if we are at the end of the list
+                if (rest_of_nodes == NULL) {
+                    
+                    // Go back to the begining of the list
+                    rest_of_nodes = rr_list;
+                }
+            } // while
 
-			// 'total_wait_time' for average wait time caculation
-			total_wait_time += temp->processTime.wait;
-
-			// Call a process display function:
+			// Process stamp display:
 			// Pname       Start Time              Remaining time                Wait time
-			//        (accum_execution_time)    (temp->processTime.burst)    (temp->processTime.wait)
-			//                                     [burst - quantum]
-            printf("%12s    %10d    %14d    %9d\n", temp->name, accum_execution_time, temp->processTime.burst, temp->processTime.wait);
+			//             start_time        (temp->processTime.burst)    (temp->processTime.wait)
+			//                                     [burst - quantums]
+            printf("%12s    %10d    %14d    %9d\n", temp->name, start_time, temp->processTime.burst, temp->processTime.wait);
             
-            // Add a 'real_exec_time' to the 'accum_execution_time'
-			accum_execution_time += real_exec_time;
+            // Add a 'real_exec_time' to the 'start_time'
+			start_time += real_exec_time;
             
-		}// if
+		} // if
         
-        // Update 'flag' state
+        // Update 'flag's state, that is, sum of the 'burst' times
         flag += temp->processTime.burst;
 
-		temp = temp->NEXT;
-
 		// Check if we are at the end of the list
-		if (temp == NULL) {
-			// If we are go back to the begining of the list
+		if (temp->NEXT == NULL) {
+            
+			// Go back to the begining of the list
 			temp = rr_list;
-            
-            // Keep track of how many times we have looped the list
-            list_loops++;
+            rest_of_nodes = temp->NEXT;
             
             
+            // If 'flag' is not zero, there are still processes to be run
             if (flag) {
-                // There are still processes to finished, reset flag
+                
+                // There are still processes to be finished, reset flag
                 flag = 0;
             } else {
+                
                 // All processes are finished, exit 'while' loop
                 sentinel = 'f';
-            }
-		} // if
+            } // if - else
+		}
+        else {
+            // This is not the last node, just move on
+            temp = temp->NEXT;
+            rest_of_nodes = temp->NEXT;
+            
+        }// if - else
 	} // while
 
-	// Restore original 'burst' times into 'rr_list'
+	// Restore original 'burst' times into 'rr_list' and get 'total_wait_time'
+    temp = rr_list;
+    
+    while (orig_list != NULL) {
+        temp->processTime.burst = orig_list->processTime.burst;
+        total_wait_time += temp->processTime.wait;
+        
+        temp = temp->NEXT;
+        orig_list = orig_list->NEXT;
+    }
+
+#ifdef DEBUG
+	print_title("++DEBUG: rr_list: Display rr_list");
+	if (rr_list == NULL) {
+		puts("The list is empty.");
+	}
+	else {
+		display_list(rr_list);
+	}
+#endif
 
     return (float)total_wait_time / (float)number_processes;;
     
@@ -344,7 +414,7 @@ void fcfs_wrapper(const node_t *head_ptr) {
 	// Process
     print_title("First Come First Served");
     average_wait_time = fcfs(fcfs_list);
-    printf("%.2f\n", average_wait_time);
+    printf("Average wait time: %.2f\n", average_wait_time);
     
 } // fcfs_wrapper
 
@@ -364,7 +434,7 @@ void sjf_wrapper(const node_t *head_ptr) {
 	// Process
 	print_title("Shortest Job First");
     average_wait_time = sjf(sjf_list);
-    printf("%.2f\n", average_wait_time);
+    printf("Average wait time: %.2f\n", average_wait_time);
     
 } // sjf_wrapper
 
@@ -389,11 +459,15 @@ void round_robin_wrapper(const node_t *head_ptr) {
     puts("");
     quantum = capture_short_uint("Enter a quantum: ");
     
-    average_wait_time = round_robin(rr_list, quantum);
-    printf("%.2f\n", average_wait_time);
+    average_wait_time = round_robin(head_ptr, rr_list, quantum);
+    printf("Average wait time:  %.2f\n", average_wait_time);
     
 } // round_robin_wrapper
 
+
+
+
+// Linked List implementation
 
 void sort(node_t *head_ptr) {
 	//	Local variables
@@ -499,7 +573,6 @@ node_t * copy_list(const node_t *src_list)
 		temp_dst = temp_dst->NEXT;
 	}
 
-#undef DEBUG
 #ifdef DEBUG
 	print_title("++DEBUG: copy_list: Display src_list");
 	if (src_list == NULL) {
@@ -517,7 +590,7 @@ node_t * copy_list(const node_t *src_list)
 		display_list(dst_list);
 	}
 #endif
-#define DEBUG
+
 
 	return dst_list;
 
@@ -655,6 +728,10 @@ void copy_node(node_t *dst, const node_t *src) {
 
 } // copy_node
 
+
+
+
+// Utilities implementation
 
 void capture_string(char * dst, const char *message) {
     //	Process
