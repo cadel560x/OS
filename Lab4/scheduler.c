@@ -241,6 +241,7 @@ float round_robin(node_t *rr_list, unsigned short int quantum) {
 	// Local variables
 	// Auxiliary local variables
 	unsigned short int number_processes;
+    unsigned short int real_exec_time;
 	unsigned int accum_execution_time;
 	unsigned int total_wait_time;
     unsigned int list_loops;
@@ -252,6 +253,7 @@ float round_robin(node_t *rr_list, unsigned short int quantum) {
 	number_processes = size(rr_list);
 	accum_execution_time = 0;
 	total_wait_time = 0;
+    real_exec_time = 0;
 	temp = rr_list;
     list_loops = 0;
 	sentinel = 't'; // It's a boolean
@@ -268,10 +270,15 @@ float round_robin(node_t *rr_list, unsigned short int quantum) {
             
 			// Avoid negative burst times. Set them to '0'
 			if ( temp->processTime.burst < quantum ) {
+                
+                real_exec_time = temp->processTime.burst;
+                
 				temp->processTime.burst = 0;
 			} else {
                 // The process' new 'burst' time is its 'burst' time minus the 'quantum'
                 temp->processTime.burst -= quantum;
+                
+                real_exec_time = quantum;
             }
 			
 			// The 'wait' time of the current process is value that is in 'accum_execution_time' so far
@@ -286,15 +293,14 @@ float round_robin(node_t *rr_list, unsigned short int quantum) {
 			//                                     [burst - quantum]
             printf("%12s    %10d    %14d    %9d\n", temp->name, accum_execution_time, temp->processTime.burst, temp->processTime.wait);
             
-            // Add a 'quantum' to the 'accum_execution_time'
-			accum_execution_time += quantum;
+            // Add a 'real_exec_time' to the 'accum_execution_time'
+			accum_execution_time += real_exec_time;
             
 		}// if
         
         // Update 'flag' state
         flag += temp->processTime.burst;
 
-		// Go to next node
 		temp = temp->NEXT;
 
 		// Check if we are at the end of the list
@@ -381,7 +387,7 @@ void round_robin_wrapper(const node_t *head_ptr) {
     //Process
     print_title("Round Robin");
     puts("");
-    quantum = capture_short_uint("Enter the quantum: ");
+    quantum = capture_short_uint("Enter a quantum: ");
     
     average_wait_time = round_robin(rr_list, quantum);
     printf("%.2f\n", average_wait_time);
