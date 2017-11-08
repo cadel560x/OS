@@ -305,7 +305,7 @@ float round_robin(const node_t *head_ptr, node_t *rr_list, unsigned short int qu
                 temp->processTime.burst -= quantum;
             } // if - else
 			
-			// The previous 'accum_execution_time' is added to the current process's 'wait' time
+			// The previous 'start_time' is added to the current process's 'wait' time
 			// temp->processTime.wait = start_time;
             
             if (rest_of_nodes == NULL) {
@@ -314,6 +314,7 @@ float round_robin(const node_t *head_ptr, node_t *rr_list, unsigned short int qu
                 rest_of_nodes = rr_list;
             }
             
+			// 'wait' time calculation!
             // Add the 'real_exec_time' to the 'wait' time of the 'rest_of_nodes' that are not finished
             while ( strcmp(rest_of_nodes->name, temp->name) != 0 ) { // Remember: 'rest_of_nodes' starts at the 'NEXT' node of the current processed node and it ends on this current node.
                 
