@@ -1,7 +1,6 @@
 package ie.gmit.sw.os.server;
 
-import java.io.IOException;
-import java.net.ServerSocket;
+import java.util.Scanner;
 
 
 
@@ -9,36 +8,107 @@ import java.net.ServerSocket;
 public class Server {
 //  Constants
     private static final int SERVER_PORT = 8080;
+    private static final int THREAD_NUMBER = 10;
     
 //  Fields
-    private ServerSocket ss;
+//  TODO Make 'portNumber' and 'threadNumber' 16 bit word
+    private int serverPort;
+    private int threadNumber;
     
     
     
     
 //  Constructors
     public Server() {
-        try {
-            
-            ss = new ServerSocket(SERVER_PORT);
-            // Give the 'server' instance its own thread
-            Thread server = new Thread(new Listener(), "Server Listener");
-            server.setPriority(Thread.MAX_PRIORITY);
-            server.start();
-            
-            System.out.println("Server started and listening on port " + SERVER_PORT);
-            
-        } catch (IOException e) {
-            e.printStackTrace();
-        } // try - catch
+        this.serverPort = SERVER_PORT;
+        this.threadNumber = THREAD_NUMBER;
+        
+        initServerThread();
+        
     }
+
+    public Server(int serverPort, int threadNumber) {
+        this.serverPort = serverPort;
+        this.threadNumber = threadNumber;
+        
+        initServerThread();
+        
+    }
+    
+    
+    
+    
+//  Accessors and mutators
+    public int getServerPort() {
+        return serverPort;
+    }
+
+    public void setServerPort(int serverPort) {
+        this.serverPort = serverPort;
+    }
+
+    public int getThreadNumber() {
+        return threadNumber;
+    }
+
+    public void setThreadNumber(int threadNumber) {
+        this.threadNumber = threadNumber;
+    }
+
+    
+    
+    
+//  Methods
+    public Server start(int serverPort, int threadNumber) {
+     // TODO Make the server port number set by command args or Java directives/declarations
+        Scanner scanner = new Scanner(System.in);
+        String portNumberString;
+        String threadNumberString;
+    
+        
+        System.out.print("Enter server port number: ");
+        portNumberString = scanner.nextLine();
+        
+        System.out.print("Enter number of threads: ");
+        threadNumberString = scanner.nextLine();
+        
+        if ( portNumberString.equals("") ) {
+            this.serverPort = serverPort;
+        }
+        else {
+            setServerPort(Integer.parseInt(portNumberString));
+        }
+        
+        if ( threadNumberString.equals("") ) {
+            this.threadNumber = threadNumber;
+        }
+        else {
+            setThreadNumber(Integer.parseInt(threadNumberString));
+        }
+        
+        scanner.close();
+        
+        return new Server(this.serverPort, this.threadNumber);
+        
+    } // start
+    
+    
+    public void initServerThread() {
+        // Give the 'listener' instance its own thread
+        Thread listener = new Thread(new Listener(serverPort, threadNumber), "Server Listener");
+        listener.setPriority(Thread.MAX_PRIORITY);
+        listener.start();
+        
+    } // initServerThread()
     
     
     
     
 //  Entry point
     public static void main(String[] args) {
-        new Server(); 
+        // TODO fix this to make program wait for user input
+//        new Server().start(SERVER_PORT, THREAD_NUMBER);
+        new Server();
     }
     
 } // class Server
