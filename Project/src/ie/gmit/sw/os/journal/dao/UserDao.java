@@ -18,9 +18,9 @@ import ie.gmit.sw.os.journal.model.User;
 
 public class UserDao {
 //  Constants
-    private static String USERS_FILE = "users.txt";
+    private static String USERS_FILE = "users.dat";
     
-//  Fields
+//  Data members
     private File file;
     
     

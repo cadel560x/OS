@@ -1,12 +1,16 @@
 package ie.gmit.sw.os.journal.model;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
 
 
 
-public class Journal {
+public class Journal implements Serializable {
+//  Constants
+    private static final long serialVersionUID = 3L;
+    
 //  Fields
     private int id;
     private int userId;

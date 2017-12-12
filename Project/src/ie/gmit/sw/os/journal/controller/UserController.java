@@ -14,19 +14,21 @@ import ie.gmit.sw.os.journal.model.User;
 public class UserController {
 //  Fields
     private List<User> users;
-    private UserDao userDao;
+    
+//  Data members
+//    private UserDao userDao;
     
     
     
     
 //  Constructors
     public UserController () {
-        try {
-            userDao = new UserDao();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+//        try {
+//            userDao = new UserDao();
+//        } catch (IOException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
         
     }
     
@@ -47,8 +49,9 @@ public class UserController {
     
 //  Methods
     public void loadUsers() {
-
         try {
+            UserDao userDao = new UserDao();
+            
             setUsers(userDao.getUsers());
         } catch (ClassNotFoundException | IOException e) {
             // TODO Auto-generated catch block
@@ -60,6 +63,8 @@ public class UserController {
     
     public void saveUsers() {
         try {
+            UserDao userDao = new UserDao();
+            
             userDao.writeUsers(users);
         } catch (IOException e) {
             // TODO Auto-generated catch block
