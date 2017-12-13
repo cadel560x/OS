@@ -1,7 +1,5 @@
 package ie.gmit.sw.os.journal.view;
 
-import java.io.InputStream;
-import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
 
@@ -10,8 +8,8 @@ import java.util.Scanner;
 
 public abstract class View {
 //  Data members
-    private Scanner scanner;
-    private PrintStream out;
+    protected Scanner scanner;
+    protected PrintStream out;
     
     
     
@@ -38,6 +36,10 @@ public abstract class View {
         this.scanner = scanner;
     }
 
+    public PrintStream getOut() {
+        return out;
+    }
+
     public void setOut(PrintStream out) {
         this.out = out;
     }
@@ -46,17 +48,17 @@ public abstract class View {
     
     
 //  Methods
-    public void printTitle(String title) {
-        StringBuilder underline = new StringBuilder();
-        
-        out.println(title);
-        
-        for ( int i = 0; i < title.length(); i++ ) {
-            underline.append('=');
-        }
-        
-        out.println(underline);
-        
-    } // printTitle
+//    public void printTitle(String title) {
+//        StringBuilder underline = new StringBuilder();
+//        
+//        out.println(title);
+//        
+//        for ( int i = 0; i < title.length(); i++ ) {
+//            underline.append('=');
+//        }
+//        
+//        out.println(underline);
+//        
+//    } // printTitle
     
 } // abstract class View

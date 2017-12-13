@@ -2,6 +2,8 @@ package ie.gmit.sw.os.journal.controller;
 
 import java.util.Scanner;
 
+import ie.gmit.sw.os.journal.view.JournalView;
+
 public class Runner {
 
     public static void main(String[] args) {
@@ -22,9 +24,14 @@ public class Runner {
 //        }
         
         userId = userController.getUsers().get(0).getId();
-        journalController = new JournalController(userId);
-        journalController.loadJournal();
-        journalController.createRecord(scanner, System.out);
+//        journalController = new JournalController(userId);
+//        journalController.loadJournal();
+//        journalController.createRecord(scanner, System.out);
+        
+        JournalView journalView = new JournalView(scanner, System.out, userId);
+        
+//        journalController.saveJournal();
+        journalController = journalView.getJournalController();
         journalController.saveJournal();
         
         userController.saveUsers();
