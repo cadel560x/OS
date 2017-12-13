@@ -1,7 +1,9 @@
 package ie.gmit.sw.os.journal.controller;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -53,8 +55,12 @@ public class UserController {
             UserDao userDao = new UserDao();
             
             setUsers(userDao.getUsers());
+        } catch (EOFException e) {
+            // Empty users file
+            // Instantiate the 'users' list
+            users = new LinkedList<>();
         } catch (ClassNotFoundException | IOException e) {
-            // TODO Auto-generated catch block
+            // TODO Auto-generated catch block, create a catch block for EOFException, the file is just created and empty
             e.printStackTrace();
         }
         
@@ -101,7 +107,7 @@ public class UserController {
         
         this.users.add(user);
         
-    } // createUser
+    } // createUserView()
     
     
     public User getUser(int userId) {

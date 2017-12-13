@@ -43,7 +43,7 @@ public class UserDao {
         
         try {
             do {
-                object = inputStream .readObject();
+                object = inputStream.readObject();
                 if ( object instanceof User ) {
                     users.add( (User)object );
                 }
@@ -72,10 +72,5 @@ public class UserDao {
         outputStream.close();
         
     } // writeUsers
-
-
-    public void createUsersFile() {
-        
-    } // createUsersFile
     
 } // class UserDao

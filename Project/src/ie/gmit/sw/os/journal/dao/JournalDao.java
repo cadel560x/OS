@@ -6,13 +6,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.LinkedList;
-import java.util.List;
 
 import ie.gmit.sw.os.journal.model.Journal;
-import ie.gmit.sw.os.journal.model.User;
 
 
 
@@ -36,7 +34,7 @@ public class JournalDao {
     public JournalDao(int userId) throws IOException {
         this.userId = userId;
         
-        file = new File(JOURNAL_FILE + this.userId);
+        file = new File(JOURNAL_FILE + this.userId + ".dat");
         file.createNewFile();
     }
 
@@ -55,37 +53,30 @@ public class JournalDao {
                 journal = (Journal)object;
             }
             
-            if (journal.getUserId() != userId) {
-                throws Exception e;
+            if ( object != null && journal.getUserId() != userId) {
+                throw new InvalidObjectException("Incorrect journal for user " + userId);
             }
+            
         } catch (EOFException e) {
             // End of file reached.
-            return users;
+            return journal;
             
         } finally {
             inputStream.close();
         }
         
-        return users; // This is unlikely to get reached, but anyway...
+        return journal; // 'return' when file is empty with an empty instance of 'journal'
         
-    } // getUsers
+    } // getJournal
     
     
-    public void writeUsers(List<User> users) throws FileNotFoundException, IOException {
+    public void writeJournal(Journal journal) throws FileNotFoundException, IOException {
         // 'false' in 'FileOutputStream' overwrites the output file
         ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file, false));
-        
-        for ( User user: users ) {
-            outputStream.writeObject(user);
-        }
+        	outputStream.writeObject(journal);
         
         outputStream.close();
         
-    } // writeUsers
-
-
-    public void createUsersFile() {
-        
-    } // createUsersFile
+    } // writeJournal
     
 } // class UserDao
