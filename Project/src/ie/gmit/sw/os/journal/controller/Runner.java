@@ -23,12 +23,14 @@ public class Runner {
 //            option = scanner.nextLine();
 //        }
         
-        userId = userController.getUsers().get(0).getId();
+//        userId = userController.getUsers().get(0).getId();
 //        journalController = new JournalController(userId);
 //        journalController.loadJournal();
 //        journalController.createRecord(scanner, System.out);
         
+        userId = 1;
         JournalView journalView = new JournalView(scanner, System.out, userId);
+        journalView.createRecord();
         
 //        journalController.saveJournal();
         journalController = journalView.getJournalController();

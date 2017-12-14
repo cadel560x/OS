@@ -30,16 +30,13 @@ public class JournalView extends View {
     }
     
     public JournalView(int userId) {
-        this.userId = userId;
-        
-        journalController = new JournalController(userId);
+        initJournalView(userId);
     }
     
     public JournalView(Scanner scanner, PrintStream out, int userId) {
         super(scanner, out);
-        this.userId = userId;
         
-        journalController = new JournalController(userId);
+        initJournalView(userId);
     }
     
     
@@ -66,6 +63,15 @@ public class JournalView extends View {
     
     
     //  Methods
+    public void initJournalView(int userId) {
+        this.userId = userId;
+        
+        journalController = new JournalController(userId);
+        journalController.loadJournal();
+        
+    } // initJournalView
+    
+    
     public void createRecord() {
         Record record = null;
         RecordType option;
@@ -131,7 +137,7 @@ public class JournalView extends View {
         msg.setLength(0);
         
         msg.append('\n');
-        msg.append("\nEnter duration (minutes): ");
+        msg.append("Enter duration (minutes): ");
         
         out.print(msg);
         fitnessRecord.setDuration(Integer.parseInt(scanner.nextLine()));
@@ -163,7 +169,7 @@ public class JournalView extends View {
         msg.setLength(0);
         
         msg.append('\n');
-        msg.append("\nEnter description:\n ");
+        msg.append("Enter description:\n ");
         
         out.print(msg);
         mealRecord.setDescription((scanner.nextLine()));

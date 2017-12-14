@@ -43,11 +43,14 @@ public class JournalDao {
 
  //  Methods
     public Journal getJournal() throws IOException, ClassNotFoundException {
-        ObjectInputStream inputStream  = new ObjectInputStream(new FileInputStream(file));
+//        ObjectInputStream inputStream  = new ObjectInputStream(new FileInputStream(file));
+        ObjectInputStream inputStream  = null;
         Journal journal = new Journal();
         Object object;
         
         try {
+            inputStream  = new ObjectInputStream(new FileInputStream(file));
+            
             object = inputStream.readObject();
             if ( object instanceof Journal ) {
                 journal = (Journal)object;
@@ -62,7 +65,9 @@ public class JournalDao {
             return journal;
             
         } finally {
-            inputStream.close();
+            if ( inputStream != null ) {
+                inputStream.close();
+            }
         }
         
         return journal; // 'return' when file is empty with an empty instance of 'journal'

@@ -37,12 +37,15 @@ public class UserDao {
     
 //  Methods
     public List<User> getUsers() throws IOException, ClassNotFoundException {
-        ObjectInputStream inputStream  = new ObjectInputStream(new FileInputStream(file));
+//        ObjectInputStream inputStream  = new ObjectInputStream(new FileInputStream(file));
+        ObjectInputStream inputStream = null;
         List<User> users = new LinkedList<>();
         Object object;
         
         try {
-            do {
+            inputStream  = new ObjectInputStream(new FileInputStream(file));
+            
+            do {    
                 object = inputStream.readObject();
                 if ( object instanceof User ) {
                     users.add( (User)object );
@@ -53,7 +56,9 @@ public class UserDao {
             return users;
             
         } finally {
-            inputStream.close();
+            if ( inputStream != null ) {
+                inputStream.close();
+            }
         }
         
         return users; // This is unlikely to get reached, but anyway...
