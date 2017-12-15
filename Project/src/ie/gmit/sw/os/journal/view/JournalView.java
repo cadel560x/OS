@@ -158,13 +158,13 @@ public class JournalView extends View {
         
         for ( MealType mealtype: MealType.values() ) {
             if ( mealtype.ordinal() != 0 ) {
-                msg.append("[" + mealtype.ordinal() + "] " + mealRecord + '\n');
+                msg.append("[" + mealtype.ordinal() + "] " + mealtype + '\n');
             }
         }
         msg.append("\nOption: ");
         
         out.print(msg);
-        mealRecord.setMealType(MealType.values()[Integer.parseInt(scanner.nextLine())]);
+        mealRecord.setMealType(MealType.values()[Integer.parseInt(scanner.nextLine().trim())]);
         
         msg.setLength(0);
         
