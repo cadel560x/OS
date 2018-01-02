@@ -3,6 +3,7 @@ package ie.gmit.sw.os.journal.controller;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -117,7 +118,14 @@ public class UserController {
     } // getUser
     
     
-    public User getUser(String username) {
+    public User getUser(String userName) {
+//        Iterator<User> listIterator = users.iterator(); 
+        
+        for (User user: users) {
+            if ( userName.equals(user.getUserName()) ) {
+                return user;
+            }
+        }
         
         return null;
         
@@ -135,7 +143,7 @@ public class UserController {
     
     
     public boolean authenticateUser(User user, String password) {
-        if ( password.equals(user.getPassword()) ) {
+        if ( user != null && password.equals(user.getPassword()) ) {
             return true;
         }
         
