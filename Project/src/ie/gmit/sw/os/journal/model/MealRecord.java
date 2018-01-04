@@ -1,10 +1,13 @@
 package ie.gmit.sw.os.journal.model;
 
+import java.io.Serializable;
 
 
 
-public class MealRecord extends Record {
+
+public class MealRecord extends Record implements Serializable {
 //  Constants
+    private static final long serialVersionUID = 2L;
     private static final int MAX_LENGTH = 100;
     
 //  Fields
@@ -16,6 +19,7 @@ public class MealRecord extends Record {
     
 //  Constructors
     public MealRecord() {
+        
     }
     
     public MealRecord(int id, MealType mealType, String description) {
@@ -41,7 +45,11 @@ public class MealRecord extends Record {
     }
 
     public void setDescription(String description) {
-        this.description = description.substring(0, MAX_LENGTH); // Requirement 4.b
+        this.description = description;
+        
+        if (description.length() > MAX_LENGTH ) {
+            this.description = description.substring(0, MAX_LENGTH); // Requirement 4.b
+        }
     }
     
     

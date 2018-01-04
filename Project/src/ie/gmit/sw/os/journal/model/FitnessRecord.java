@@ -1,10 +1,13 @@
 package ie.gmit.sw.os.journal.model;
 
+import java.io.Serializable;
 
 
 
-public class FitnessRecord extends Record {
+
+public class FitnessRecord extends Record implements Serializable {
 //  Fields
+    private static final long serialVersionUID = 2L;
     private FitnessMode mode;
     private int duration;
     
@@ -55,7 +58,6 @@ public class FitnessRecord extends Record {
         builder.append(mode);
         builder.append(", duration=");
         builder.append(duration);
-        builder.append(", toString()=");
         builder.append("]");
         return builder.toString();
     }

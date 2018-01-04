@@ -1,10 +1,10 @@
 package ie.gmit.sw.os.journal.model;
 
+import java.io.Serializable;
 
-
-
-public abstract class Record {
+public abstract class Record implements Serializable {
 //  Fields
+    private static final long serialVersionUID = 2L;
     private int id;
     
     
@@ -38,9 +38,8 @@ public abstract class Record {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Record [id=");
+        builder.append("Record id=");
         builder.append(id);
-        builder.append("]");
         return builder.toString();
     }
 

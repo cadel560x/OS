@@ -38,20 +38,20 @@ public class Heading {
 //  Methods
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder();
         
-        if ( underline == HeadingType.TTITLE.getUnderline() ) {
-            builder.append(text.toUpperCase() + '\n');
+        if ( underline == HeadingType.TITLE.getUnderline() ) {
+            stringBuilder.append(text.toUpperCase() + '\n');
         } else {
-            builder.append(text + '\n' );
+            stringBuilder.append(text + '\n' );
         }
         
         for (char c : text.toCharArray()) {
-            builder.append(underline);
+            stringBuilder.append(underline);
         }
-        builder.append("\n");
+        stringBuilder.append("\n");
         
-        return builder.toString();
+        return stringBuilder.toString();
         
     } // toString
    

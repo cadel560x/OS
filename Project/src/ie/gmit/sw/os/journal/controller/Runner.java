@@ -28,13 +28,13 @@ public class Runner {
 //        journalController.loadJournal();
 //        journalController.createRecord(scanner, System.out);
         
-        userId = 1;
-        JournalView journalView = new JournalView(scanner, System.out, userId);
-        journalView.createRecord();
+//        userId = 1;
+//        JournalView journalView = new JournalView(scanner, System.out, userId);
+//        journalView.createRecord();
         
 //        journalController.saveJournal();
-        journalController = journalView.getJournalController();
-        journalController.saveJournal();
+//        journalController = journalView.getJournalController();
+//        journalController.saveJournal();
         
         userController.saveUsers();
         

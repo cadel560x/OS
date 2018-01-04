@@ -107,11 +107,17 @@ public class UserController {
 //        scanner.close();
         
         this.users.add(user);
+        this.saveUsers();
         
     } // createUserView()
     
     
     public User getUser(int userId) {
+        for (User user: users) {
+            if (userId == user.getId()) {
+                return user;
+            }
+        }
         
         return null;
         
@@ -133,11 +139,46 @@ public class UserController {
     
     
     public void removeUser(int userId) {
+        User user = this.getUser(userId);
+        
+        if (user != null ) {
+            users.remove(user);
+            this.saveUsers();
+        }
         
     } // removeUser
     
     
-    public void updateUser(User user) {
+    public void updateUser(int userId, User userStub) {
+        User user = this.getUser(userId);
+        
+        if (user != null) {
+            if (userStub.getName() != null) {
+                user.setName(userStub.getName());
+            }
+            
+            if (userStub.getAddress() != null) {
+                user.setAddress(userStub.getAddress());
+            }
+            
+            if (userStub.getPpsNumber() != null) {
+                user.setPpsNumber(userStub.getPpsNumber());
+            }
+            
+            if (userStub.getAge() != 0) {
+                user.setAge(userStub.getAge());
+            }
+            
+            if (userStub.getWeight() != 0 ) {
+                user.setWeight(userStub.getWeight());
+            }
+            
+            if (userStub.getHeight() != 0 ) {
+                user.setHeight(userStub.getHeight());
+            }
+            
+            this.saveUsers();
+        }
         
     } // updateUser
     

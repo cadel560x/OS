@@ -1,7 +1,7 @@
 package ie.gmit.sw.os.journal.view;
 
 public enum HeadingType {
-    TTITLE('='),
+    TITLE('='),
     SUBTITLE('-');
     
     private char underline;

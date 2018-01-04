@@ -5,6 +5,7 @@ import java.io.IOException;
 import ie.gmit.sw.os.journal.dao.JournalDao;
 import ie.gmit.sw.os.journal.model.Journal;
 import ie.gmit.sw.os.journal.model.Record;
+import ie.gmit.sw.os.journal.model.User;
 
 
 
@@ -27,6 +28,7 @@ public class JournalController {
     
     public JournalController(int userId) {
         this.userId = userId;
+        
 //        try {
 //            journalDao = new JournalDao(this.userId);
 //        } catch (IOException e) {
@@ -65,6 +67,7 @@ public class JournalController {
             JournalDao journalDao = new JournalDao(this.userId);
             
             setJournal(journalDao.getJournal());
+            this.journal.setUserId(userId);
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -91,19 +94,29 @@ public class JournalController {
     
 
     public Record getRecord(int recordId) {
-        
+        for (Record record: journal.getRecords()) {
+            if (recordId == record.getId()) {
+                return record;
+            }
+        }
         return null;
         
-    } // getUser
+    } // getRecord
     
     
     public void removeRecord(int recordId) {
+        Record record = this.getRecord(recordId);
         
-    } // removeUser
+        if (record != null ) {
+            this.journal.getRecords().remove(record);
+            this.saveJournal();
+        }
+        
+    } // removeRecord
     
     
     public void updateRecord(int recordId) {
         
-    } // updateUser
+    } // updateRecord
     
 } // class JournalController
