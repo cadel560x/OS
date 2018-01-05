@@ -35,9 +35,10 @@ public class Client{
 			//1. creating a socket to connect to the server
 //			System.out.print("Please enter remote IP address: ");
 //			ipaddress = scanner.next();
+		    ipaddress = "127.0.0.1";
 			
-//			requestSocket = new Socket(ipaddress, 8080);
-			requestSocket = new Socket("127.0.0.1", 8080);
+			requestSocket = new Socket(ipaddress, 8080);
+//			requestSocket = new Socket("127.0.0.1", 8080);
 			
 			System.out.println("Connected to " + ipaddress + " in port 8080");
 			//2. get Input and Output streams
@@ -48,7 +49,7 @@ public class Client{
 //			in = new ObjectInputStream(requestSocket.getInputStream());
 			
 //			PrintStream out = new PrintStream( requestSocket.getOutputStream(), true );
-          BufferedReader in = new BufferedReader( new InputStreamReader( requestSocket.getInputStream() ) );
+            BufferedReader in = new BufferedReader( new InputStreamReader( requestSocket.getInputStream() ) );
 			
 			
 //			System.out.println("Hello");

@@ -17,11 +17,11 @@ public class Runner {
         userController.loadUsers();
         
         
-//        while ( ! option.equalsIgnoreCase("no") ) {
-//            userController.createUser(scanner, System.out);
-//            System.out.println("Keep adding users? ");
-//            option = scanner.nextLine();
-//        }
+        while ( ! option.equalsIgnoreCase("no") ) {
+            userController.createUser(scanner, System.out);
+            System.out.println("Keep adding users? ");
+            option = scanner.nextLine();
+        }
         
 //        userId = userController.getUsers().get(0).getId();
 //        journalController = new JournalController(userId);
