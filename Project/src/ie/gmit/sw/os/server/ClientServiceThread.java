@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -23,9 +24,15 @@ public class ClientServiceThread implements Runnable {
 //    private String message;
     private int clientID;
     private ObjectOutputStream outStream;
+    
 //    private OutputStream outStream;
-    private ObjectInputStream in;
-    private PrintStream out;
+    
+//    private ObjectInputStream in;
+//    private PrintStream out;
+    
+    private PrintWriter out;
+    private BufferedReader in;
+    
 	  
 	  
 	  
@@ -82,21 +89,21 @@ public class ClientServiceThread implements Runnable {
         this.outStream = outStream;
     }
 
-    public ObjectInputStream getIn() {
-        return in;
-    }
-
-    public void setIn(ObjectInputStream in) {
-        this.in = in;
-    }
-
-    public PrintStream getOut() {
-        return out;
-    }
-
-    public void setOut(PrintStream out) {
-        this.out = out;
-    }
+//    public ObjectInputStream getIn() {
+//        return in;
+//    }
+//
+//    public void setIn(ObjectInputStream in) {
+//        this.in = in;
+//    }
+//
+//    public PrintStream getOut() {
+//        return out;
+//    }
+//
+//    public void setOut(PrintStream out) {
+//        this.out = out;
+//    }
 
     
     
@@ -118,10 +125,16 @@ public class ClientServiceThread implements Runnable {
 	public void initClientServiceThread() throws IOException {
 	    outStream = new ObjectOutputStream(clientSocket.getOutputStream());
         outStream.flush();
-        in = new ObjectInputStream(clientSocket.getInputStream());
+//        in = new ObjectInputStream(clientSocket.getInputStream());
+        
 //        BufferedReader in = new BufferedReader( new InputStreamReader( clientSocket.getInputStream() ) );
 //        out = new PrintStream(clientSocket.getOutputStream());
-        out = new PrintStream(outStream, true);
+//        out = new PrintStream(outStream, true);
+        
+        out = new PrintWriter(clientSocket.getOutputStream(), true);
+        in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        
+        
         out.flush();
         
 	} // initClientServiceThread
@@ -157,7 +170,7 @@ public class ClientServiceThread implements Runnable {
 	        
 	        
 	        userId = new LoginView(scanner, out).login();
-	        new JournalView(scanner, out, userId);
+//	        new JournalView(scanner, out, userId);
 	        
 			System.out.println("Ending client-" + clientID + ": Address - "
 			        + clientSocket.getInetAddress().getHostName() + ", Client port - "

@@ -1,6 +1,7 @@
 package ie.gmit.sw.os.journal.view;
 
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.Scanner;
 
 import ie.gmit.sw.os.journal.controller.UserController;
@@ -31,11 +32,16 @@ public class LoginView extends View {
         out.println(new Heading("WELCOME TO JAVIER'S FITNESS & FOOD JOURNAL", HeadingType.TITLE.getUnderline()));
 //        this.login();
     }
-    
-    
-    
-    
-//  Methods
+     
+    public LoginView(Scanner scanner, PrintWriter out) {
+        super(scanner, out);
+        userController.loadUsers();
+        
+        out.println(new Heading("WELCOME TO JAVIER'S FITNESS & FOOD JOURNAL", HeadingType.TITLE.getUnderline()));
+//      this.login();
+    }
+
+    //  Methods
     public int login() {
         String userName, password;
         int loginCounter;

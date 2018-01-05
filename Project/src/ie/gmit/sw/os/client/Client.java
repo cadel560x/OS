@@ -42,10 +42,11 @@ public class Client{
 			
 			System.out.println("Connected to " + ipaddress + " in port 8080");
 			//2. get Input and Output streams
-			out = new ObjectOutputStream(requestSocket.getOutputStream());
-//			PrintWriter out = new PrintWriter(this.requestSocket.getOutputStream(), true);
-//			PrintWriter out = new PrintWriter(this.requestSocket.getOutputStream(), true);
+//			out = new ObjectOutputStream(requestSocket.getOutputStream());
+			
+			PrintWriter out = new PrintWriter(this.requestSocket.getOutputStream(), true);
 			out.flush();
+			
 //			in = new ObjectInputStream(requestSocket.getInputStream());
 			
 //			PrintStream out = new PrintStream( requestSocket.getOutputStream(), true );
@@ -80,8 +81,8 @@ public class Client{
                     }
                     
                     message = scanner.nextLine();
-//                    out.print(message);
-                    out.writeUTF(message);
+                    out.print(message);
+//                    out.writeUTF(message);
 	
 //				}
 //				catch(ClassNotFoundException classNot)

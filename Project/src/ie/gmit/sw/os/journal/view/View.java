@@ -1,6 +1,7 @@
 package ie.gmit.sw.os.journal.view;
 
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.Scanner;
 
 
@@ -10,6 +11,7 @@ public abstract class View {
 //  Data members
     protected Scanner scanner;
     protected PrintStream out;
+    protected PrintWriter outW;
     
     
     
@@ -23,11 +25,13 @@ public abstract class View {
         this.scanner = scanner;
         this.out = out;
     }
+    
+    public View(Scanner scanner, PrintWriter outW) {
+        this.scanner = scanner;
+        this.outW = outW;
+    }
 
-
-
-
-//  Accessors and mutators
+    //  Accessors and mutators
     public Scanner getScanner() {
         return scanner;
     }
