@@ -41,7 +41,7 @@ public class LoginView extends View {
 //      this.login();
     }
 
-    //  Methods
+//  Methods
     public int login() {
         String userName, password;
         int loginCounter;

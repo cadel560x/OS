@@ -14,6 +14,7 @@ public class Client{
 	private ObjectInputStream in;
 	private String message="";
 	private String ipaddress;
+	private int port;
 	private Scanner scanner;
  	
  	
@@ -28,6 +29,20 @@ public class Client{
 	
 	
 //	Methods
+    public void sendMessage(String msg) throws IOException
+    {
+//        try{
+            out.writeObject(msg);
+            out.flush();
+//            System.out.println("client> " + msg);
+//            System.out.println(msg);
+//        }
+//        catch(IOException ioException){
+//            ioException.printStackTrace();
+//        }
+        
+    } // sendMessage
+    
 	public void init()
 	{
 		
@@ -35,62 +50,74 @@ public class Client{
 			//1. creating a socket to connect to the server
 //			System.out.print("Please enter remote IP address: ");
 //			ipaddress = scanner.next();
+//          System.out.print("Please enter port number: ");
+//          port = Integer.parseInt(scanner.next());
 		    ipaddress = "127.0.0.1";
+		    port = 8080;
 			
-			requestSocket = new Socket(ipaddress, 8080);
-//			requestSocket = new Socket("127.0.0.1", 8080);
+			requestSocket = new Socket(ipaddress, port);
+			System.out.println("Connected to " + ipaddress + " in port " + port);
 			
-			System.out.println("Connected to " + ipaddress + " in port 8080");
 			//2. get Input and Output streams
-//			out = new ObjectOutputStream(requestSocket.getOutputStream());
-			
-			PrintWriter out = new PrintWriter(this.requestSocket.getOutputStream(), true);
+			out = new ObjectOutputStream(requestSocket.getOutputStream());
 			out.flush();
 			
-//			in = new ObjectInputStream(requestSocket.getInputStream());
+			in = new ObjectInputStream(requestSocket.getInputStream());
 			
-//			PrintStream out = new PrintStream( requestSocket.getOutputStream(), true );
-            BufferedReader in = new BufferedReader( new InputStreamReader( requestSocket.getInputStream() ) );
-			
-			
-//			System.out.println("Hello");
 			//3: Communicating with the server
 			do {
-//				try
-//				{	    
-//						message = (String)in.readObject();
-//						System.out.println("server> " + message);
-//						System.out.print("Please enter the message to send> ");
-//						message = stdin.next();
-//						sendMessage(message);
-				    
-//				    message = (String)in.readObject();
-//				    System.out.print(message);
-//				    message = stdin.nextLine();
-//				    sendMessage(message);
-				    
-				    String line = in.readLine();
-//				    String line = in.readUTF();
-//			    String line = (String) in.readObject();
-                    while( line != null )
-                    {
-                        System.out.println( line );
-                        line = in.readLine();
-//                        line = in.readUTF();
-//                        line = (String) in.readObject();
-                    }
+				try
+				{   
+//				    Welcome banner
+					message = (String)in.readObject();
+                    System.out.println(message);
                     
-                    message = scanner.nextLine();
-                    out.print(message);
-//                    out.writeUTF(message);
+//	                Login process
+                    this.login();
+                    
+//	                    Main menu
+                    this.mainMenu();
+//                    
+//                    message = (String)in.readObject();
+//                    System.out.println(message);
+//                    
+//                    
+//                    message = scanner.nextLine();
+//                    sendMessage(message);
+//                    
+//                    if(message.equalsIgnoreCase("ADD"))
+//                    {
+//                        message = (String)in.readObject();
+//                        System.out.println(message);
+//                        message = scanner.nextLine();
+//                        sendMessage(message);
+//                        
+//                        message = (String)in.readObject();
+//                        System.out.println(message);
+//                        message = scanner.nextLine();
+//                        sendMessage(message);
+//                        
+//                        message = (String)in.readObject();
+//                        System.out.println(message);
+//                        
+//                    }
+//                    
+//                    else if(message.equalsIgnoreCase("SQUARE"))
+//                    {
+//                        
+//                    }
+//                    else
+//                    {
+//                        
+//                    }
+				    
 	
-//				}
-//				catch(ClassNotFoundException classNot)
-//				{
-//					System.err.println("data received in unknown format");
-//				} // try - catch
-//			} while ( !message.equals("bye") );
-			} while ( true );
+				}
+				catch(ClassNotFoundException classNot)
+				{
+					System.err.println("data received in unknown format");
+				} // try - catch
+			} while ( !message.equals("bye") );
 			
 		} //try - catch(UnknownHostException unknownHost)
 		catch(UnknownHostException unknownHost){
@@ -114,22 +141,43 @@ public class Client{
 	} // init
 	
 	
-	public void sendMessage(String msg)
-	{
-		try{
-			out.writeObject(msg);
-			out.flush();
-//			System.out.println("client> " + msg);
-		}
-		catch(IOException ioException){
-			ioException.printStackTrace();
-		}
+    private void login() throws ClassNotFoundException, IOException {
+	    String username, password;
+	    
+	    do {
+    //	    'Login:' from server
+    	    message = (String)in.readObject();
+            System.out.print(message);
+            
+    //      Send username
+            username = scanner.nextLine();
+            sendMessage(username);
+            
+    //      'Password:' from server
+            message = (String)in.readObject();
+            System.out.print(message);
+            
+    //      Send password
+            password = scanner.nextLine();
+            sendMessage(password);
+            
+//          Next string will tell us if we pass login or not
+            message = (String)in.readObject();
+            System.out.print(message);
+	    } while ( ! message.equals("Login OK\n") );
+        
+    } // login
+    
+    
+    private void mainMenu() throws ClassNotFoundException, IOException {
+        message = (String)in.readObject();
+        System.out.print(message);
+        
+        message = scanner.nextLine();
+        sendMessage(message);
+    }
+
 		
-	} // sendMessage
-	
-	
-	
-	
 //	Entry point
 	public static void main(String args[])
 	{
