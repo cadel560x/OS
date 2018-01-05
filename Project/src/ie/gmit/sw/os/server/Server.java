@@ -106,9 +106,18 @@ public class Server {
     
 //  Entry point
     public static void main(String[] args) {
-        // TODO fix this to make program wait for user input
-//        new Server().start(SERVER_PORT, THREAD_NUMBER);
-        new Server();
-    }
+//        new Server();
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.print("Enter the port number to listen on: ");
+        int portNumber = Integer.parseInt(scanner.nextLine());
+        System.out.print("Enter the number of threads: ");
+        int threadNumber = Integer.parseInt(scanner.nextLine());
+        
+        scanner.close();
+        
+        new Server(portNumber,threadNumber);
+        
+    } // main
     
 } // class Server

@@ -18,20 +18,11 @@ public class UserController {
 //  Fields
     private List<User> users;
     
-//  Data members
-//    private UserDao userDao;
-    
     
     
     
 //  Constructors
     public UserController () {
-//        try {
-//            userDao = new UserDao();
-//        } catch (IOException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
         
     }
     
@@ -56,14 +47,18 @@ public class UserController {
             UserDao userDao = new UserDao();
             
             setUsers(userDao.getUsers());
+            if (users.isEmpty()) {
+                createDefaultUser();
+            }
         } catch (EOFException e) {
             // Empty users file
             // Instantiate the 'users' list
             users = new LinkedList<>();
+            createDefaultUser();
         } catch (ClassNotFoundException | IOException e) {
             // TODO Auto-generated catch block, create a catch block for EOFException, the file is just created and empty
             e.printStackTrace();
-        }
+        } // try - catch - catch
         
     } // loadUsers
     
@@ -79,6 +74,26 @@ public class UserController {
         }
         
     } // saveUsers
+    
+    
+    public void createDefaultUser() {
+        User user = new User();
+        
+        user.setId(this.users.size() + 1);
+        
+        user.setUserName("demo");
+        user.setPassword("test");
+        user.setName("Demo account");
+        user.setAddress("The outer space");
+        user.setPpsNumber("99999CA");
+        user.setAge(99);
+        user.setWeight(999);
+        user.setHeight(999);
+        
+        this.users.add(user);
+        this.saveUsers();
+        
+    } // createDefaultUser
     
     
     public void createUser(Scanner scanner, PrintStream out) {
@@ -109,7 +124,7 @@ public class UserController {
         this.users.add(user);
         this.saveUsers();
         
-    } // createUserView()
+    } // createUser()
     
     
     public User getUser(int userId) {
