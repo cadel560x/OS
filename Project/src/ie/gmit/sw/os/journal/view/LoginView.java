@@ -45,6 +45,7 @@ public class LoginView extends View {
         
         do {
             out.print("\nLogin: ");
+//            out.flush();
             userName = scanner.nextLine();
             
             out.print("Password: ");
@@ -78,6 +79,7 @@ public class LoginView extends View {
         } while ( ! userController.authenticateUser(user, password) );
         
         return user.getId();
+//            return 2;
         
     } // login
     
